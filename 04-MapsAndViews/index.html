@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<center>
+	<h2> Population of US States and Major Cities - 2011 </h2>
+	</center>
+	 <style>
+
+	.states {
+        stroke: #000;
+        fill-opacity: .7;
+    }
+
+	</style>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.min.js" charset="utf-8"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/queue-async/1.0.7/queue.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/topojson/1.6.19/topojson.min.js"></script>
+	<script src="http://labratrevenge.com/d3-tip/javascripts/d3.tip.v0.6.3.js"></script>
+  </head>
+  <body bgcolor="lightgreen">
+	<script type="text/javascript">
+
+	    var width = 1800,
+            height = 819
+			x = 900
+			y = 300;
+
+		var cScale = d3.scale.linear()
+		.domain([40,0])
+		.range([400,0]);
+		
+		var cAxis = d3.svg.axis()
+		.ticks(10) 						
+		.scale(cScale)
+		.orient("left");
+		
+		var sScale = d3.scale.linear()
+		.domain([35,0])
+		.range([400,0]);
+		
+		var sAxis = d3.svg.axis()
+		.ticks(10) 						
+		.scale(sScale)
+		.orient("right");
+	
+		
+		var projection = d3.geo.albersUsa()
+    .scale(1200)
+    .translate([x, y]);
+	
+	var path = d3.geo.path()
+		.projection(projection);
+
+    var color = d3.scale.category20();
+
+    var svg = d3.select("body").append("svg")
+            .attr("width", width)
+            .attr("height", height)
+			.append("g")
+	
+var div = d3.select("body")
+ .append("div")
+ .attr("class", "tooltip")
+ .style("opacity", 0);
+
+var cx=250,cy=50,sx=cx+1300,sy=cy;
+		
+    queue()
+            .defer(d3.json, "us.json")
+            .await(ready);
+			
+			var  A = ["1","Alabama","4447100","2","Alaska","626932","4","Arizona","5130632","5","Arkansas","2673400","6","California","33871648","8","Colorado","4301261","9","Connecticut","3405565","10","Delaware","783600","11","District of Columbia","572059","12","Florida","15982378","13","Georgia","8186453","15","Hawaii","1211537","16","Idaho","1293953","17","Illinois","12419293","18","Indiana","6080485","19","Iowa","2926324","20","Kansas","2688418","21","Kentucky","4041769","22","Louisiana","4468976","23","Maine","1274923","24","Maryland","5296486","25","Massachusetts","6349097","26","Michigan","9938444","27","Minnesota","4919479","28","Mississippi","2844658","29","Missouri","5595211","30","Montana","902195","31","Nebraska","1711263","32","Nevada","1998257","33","New Hampshire","1235786","34","New Jersey","8414350","35","New Mexico","1819046","36","New York","18976457","37","North Carolina","8049313","38","North Dakota","642200","39","Ohio","11353140","40","Oklahoma","3450654","41","Oregon","3421399","42","Pennsylvania","12281054","44","Rhode Island","1048319","45","South Carolina","4012012","46","South Dakota","754844","47","Tennessee","5689283","48","Texas","20051820","49","Utah","2233169","50","Vermont","608827","51","Virginia","7078515","53","Washington","5894121","54","West Virginia","1808344","55","Wisconsin","5363675","56","Wyoming","493782","72","Puerto Rico","3808610"];
+			
+			function state_name(id)
+			{
+			for(var i=0;i<A.length;i++)
+				if(A[i].localeCompare(id.toString())==0)
+					return A[i+1];			
+			}
+			
+			function state_pop(id)
+			{
+			for(var i=0;i<A.length;i++)
+				if(A[i].localeCompare(id.toString())==0)
+					return parseInt(A[i+2])/1000000;		
+			}
+
+		var tip = d3.tip()
+		.attr('class', 'd3-tip')
+		.offset([-10, 0])
+		.html(function(d) {
+		return "<strong><span style='font-size: 20px'><span style='font-family: Calibri'><span style='background-color:white' ><span style='color:red' >" + "&nbsp" + d.place + "&nbsp" + "</span></span></span></span></strong>";
+		});
+	
+			var tip3 = d3.tip()
+		.html(function(d) {
+		return "<strong><span style='font-size: 25px'><span style='font-family: Calibri'><span style='background-color:yellow' ><span style='color:red' >" + "&nbsp" + state_name(d.id) + "&nbsp" + "</span></span></span></span></strong>";
+		});
+		
+    function ready(error, us, centroid) {
+		svg.call(tip);
+		svg.call(tip3);
+        var countries = topojson.feature(us, us.objects.states).features;
+
+
+
+	var srect =svg.append("rect").style("fill","blue")
+
+	var cbcircle  = svg.append("circle")
+				 .attr("cx",250)
+				 .attr("cy",650)
+				 .attr("r",150)
+				 .attr("fill","none")
+				 .style("stroke","black")
+				 .style("stroke-width","5")
+				 
+	var sbcircle  = svg.append("circle")
+				 .attr("cx",1550)
+				 .attr("cy",650)
+				 .attr("r",150)
+				 .attr("fill","none")
+				 .style("stroke","black")
+				 .style("stroke-width","5")
+				 	
+	var ccircle = svg.append("circle")
+				 .attr("cx",250)
+				 .attr("cy",650)
+				 .attr("r",0)
+				 .attr("fill","blue")
+					 			 
+	var scircle = svg.append("circle")
+				 .attr("cx",1550)
+				 .attr("cy",650)
+				 .attr("r",0)
+				 .attr("fill","blue")
+
+    var text    = svg.append("text")
+				 .attr("x",240)
+				 .attr("y",40)
+				 .attr("font-family", "sans-serif")
+				 .attr("font-size", "50px")
+				 .attr("fill", "red")
+				 .text("")
+				 
+	var text2   = svg.append("text")
+				 .attr("x",1400)
+				 .attr("y",40)
+				 .attr("font-family", "sans-serif")
+				 .attr("font-size", "50px")
+				 .attr("fill", "red")
+				 .text("")
+				 
+    var ctext  = svg.append("text")
+				 .attr("x",1535)
+				 .attr("y",480)
+				 .attr("font-family", "sans-serif")
+				 .attr("font-size", "15px")
+				 .attr("fill", "black")
+				 .text("(millions)")
+				 
+    var stext  = svg.append("text")
+				 .attr("x",170)
+				 .attr("y",480)
+				 .attr("font-family", "sans-serif")
+				 .attr("font-size", "15px")
+				 .attr("fill", "black")
+				 .text("(100 thousands)")
+				 
+    var cctext  = svg.append("text")
+				 .attr("x",50-15)
+				 .attr("y",817)
+				 .attr("font-family", "sans-serif")
+				 .attr("font-size", "15px")
+				 .attr("fill", "black")
+				 .text("Polulation of the city compared with 4 million (outer circle)")
+				 
+    var sctext  = svg.append("text")
+				 .attr("x",1370+15)
+				 .attr("y",817)
+				 .attr("font-family", "sans-serif")
+				 .attr("font-size", "15px")
+				 .attr("fill", "black")
+				 .text("Polulation of the state compared with 35 million (outer circle)")
+				 
+    var nytext1 = svg.append("text")
+				 .attr("x",630)
+				 .attr("y",745)
+				 .attr("font-family", "sans-serif")
+				 .attr("font-size", "15px")
+				 .attr("fill", "black")
+				 .text("Note: The polulation of New York City is 8.175 million. Since this value is too")
+	
+	var nytext2 = svg.append("text")
+				 .attr("x",670)
+				 .attr("y",765)
+				 .attr("font-family", "sans-serif")
+				 .attr("font-size", "15px")
+				 .attr("fill", "black")
+				 .text("large to scale with other cities', its population is shown as 4 million.")
+	
+    var state =    svg.selectAll("states")
+                .data(countries)
+                .enter().insert("path", ".graticule")
+                .attr("class", "states")
+                .attr("d", path)
+				.style("stroke-width","1.25")
+                .style("fill", "lightgreen")
+                .on('mouseover', function(d) {
+						console.log(state_pop(d.id));
+						
+					srect				
+						.transition()
+						.attr("x", sx - 110)
+						.attr("y", sy)
+						.attr("width", 100)
+						.attr("height", state_pop(d.id)*80/7)
+						
+					scircle
+						.transition()
+						.attr("r", state_pop(d.id)*4)
+						
+					text2
+						.transition()
+						.text(state_name(d.id));
+					
+						d3.select(this).transition().style("fill","cyan").style("stroke","grey").style("stroke-width","4px");
+				})
+                .on('mouseout', function(d, i) {
+
+					srect				
+						.transition()
+						.attr("x", sx - 110)
+						.attr("y", sy)
+						.attr("width", 100)
+						.attr("height",  0)
+					
+					scircle
+						.transition()
+						.attr("r", 0)
+						
+					text2
+						.transition()
+						.text("");
+					
+					d3.select(this).transition().style("fill","lightgreen").style("stroke","black").style("stroke-width","1px");	
+				})
+		   .on('mouseover.tiptool',tip3.show)
+		   .on('mouseout.tiptool', tip3.hide);
+				
+				d3.csv("city.csv", function(data) {
+
+				var crect =svg.selectAll("rect").data(data).enter().append("rect").style("fill","blue");
+
+
+        var cir = svg.selectAll("circle")
+           .data(data)
+           .enter()
+           .append("circle").style("opacity", .5)
+           .attr("cx", function(d) {
+				   if(d.id!=74&&d.id!=69)
+                   return projection([d.lon, d.lat])[0];
+           })
+           .attr("cy", function(d) {
+					if(d.id!=74&&d.id!=69)
+                   return projection([d.lon, d.lat])[1];
+           })
+           .attr("r", 4)
+           .style("fill", "blue")
+           .style("opacity", 0.75)
+		    .on('mouseover', function(d) {
+					d3.select(this).transition().attr("r", 10).style("fill", "red");
+
+					crect
+						.transition()
+						.attr("x", cx + 10)
+						.attr("y", cy)
+						.attr("width", 100)
+						.attr("height", Math.min(d.p*10,400))
+						
+					ccircle
+						.transition()
+						.attr("r", Math.min(d.p*3.7,148))
+					
+					text
+						.transition()
+						.text(d.place);
+			})
+			.on('mouseout', function(d) {
+					d3.select(this).transition().attr("r", 5).style("fill", "blue").style("opacity", 0.75);
+					
+					crect
+						.transition()
+						.attr("x", cx + 10)
+						.attr("y", cy)
+						.attr("width", 100)
+						.attr("height",  0)
+						
+					ccircle
+						.transition()
+						.attr("r", 0)
+					
+					text
+						.transition()
+						.text("");
+			})
+		   .on('mouseover.tiptool',tip.show)
+		   .on('mouseout.tiptool', tip.hide);
+		   
+		   	svg.append("g")
+			.attr("transform", "translate("+(cx-15)+","+(cy)+")")
+			.style("color", "red")
+			.call(cAxis);
+			
+			svg.append("g")
+			.attr("transform", "translate("+(sx+15)+","+sy+")")
+			.style("color", "red")
+			.call(sAxis);
+
+				});
+				
+    }
+	
+	</script>
+<div class="rect"></div>
+</body>
+</html>

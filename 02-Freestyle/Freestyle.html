@@ -1,0 +1,532 @@
+<!-- Analyzing monthly expenses -->
+
+<head>
+
+	<center>
+		<h1><font face="Calibri" color="DarkBlue">ANALYZING MY MONTHLY EXPENSE TO REDUCE FUTURE EXPENDITURES</font></h1>
+		<h1><font face="Calibri" color="DarkBlue">AUGUST 2015 CHART</font></h1>
+
+	</center>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.min.js" charset="utf-8"></script>
+
+</head>
+
+<body bgcolor="AliceBlue">
+
+	<script>
+
+		d3.csv("Expenses.csv", function (data) {
+		
+		var svg = d3.select("body").append("svg")
+			.attr("width", 1650)
+			.attr("height", 950)
+		
+		var x = 220,
+			y = 150,
+			y1 = 680;
+		
+		var atm_s = d3.sum(data, function(d) { if (d.PAYMETHOD == "ATM")
+													{return d.SAVINGS}
+											 else  return 0 });	
+											 
+		var billpay_s = d3.sum(data, function(d) { if (d.PAYMETHOD == "BILLPAY")
+													{return d.SAVINGS}
+											 else  return 0 });	 
+			
+		var check_s = d3.sum(data, function(d) { if (d.PAYMETHOD == "CHECK")
+													{return d.SAVINGS}
+											 else  return 0 });	 
+		
+		var credit_s = d3.sum(data, function(d) { if (d.PAYMETHOD == "CREDIT")
+													{return d.SAVINGS}
+											 else  return 0 });	 
+
+		var atm_d = d3.sum(data, function(d) { if (d.PAYMETHOD == "ATM")
+													{return d.CREDIT}
+											 else  return 0 });	
+											 
+		var billpay_d = d3.sum(data, function(d) { if (d.PAYMETHOD == "BILLPAY")
+													{return d.CREDIT}
+											 else  return 0 });	 
+			
+		var check_d = d3.sum(data, function(d) { if (d.PAYMETHOD == "CHECK")
+													{return d.CREDIT}
+											 else  return 0 });	 
+		
+		var credit_d = d3.sum(data, function(d) { if (d.PAYMETHOD == "CREDIT")
+													{return d.CREDIT}
+											 else  return 0 });	 
+
+		var atm_c = d3.sum(data, function(d) { if (d.PAYMETHOD == "ATM")
+													{return d.CHECKING}
+											 else  return 0 });	
+											 
+		var billpay_c = d3.sum(data, function(d) { if (d.PAYMETHOD == "BILLPAY")
+													{return d.CHECKING}
+											 else  return 0 });	 
+			
+		var check_c = d3.sum(data, function(d) { if (d.PAYMETHOD == "CHECK")
+													{return d.CHECKING}
+											 else  return 0 });	 
+		
+		var credit_c = d3.sum(data, function(d) { if (d.PAYMETHOD == "CREDIT")
+													{return d.CHECKING}
+											 else  return 0 });	 											 
+
+		svg.selectAll("rect_savings")
+			.data(data)
+			.enter()
+			.append("rect")
+			.attr("width", function (d) {return d.SAVINGS*2.92;})	
+			.attr("height", 30)
+			.attr("x", x)
+			.attr("y", function (d,i) {return y+i*40;})
+			.attr("fill","DarkTurquoise");
+
+		svg.selectAll("rect_credit")
+			.data(data)
+			.enter()
+			.append("rect")
+			.attr("width", function (d) {return d.CREDIT*2.92;})	
+			.attr("height", 30)
+			.attr("x", function (d) {return x+d.SAVINGS*2.92;})
+			.attr("y", function (d,i) {return y+i*40;})
+			.attr("fill","DarkCyan");
+			
+		svg.selectAll("rect_checking")
+			.data(data)
+			.enter()
+			.append("rect")
+			.attr("width", function (d) {return d.CHECKING*2.92;})	
+			.attr("height", 30)
+			.attr("x", function (d) {return x+d.SAVINGS*2.92+d.CREDIT*2.92;})
+			.attr("y", function (d,i) {return y+i*40;})
+			.attr("fill","DodgerBlue");
+
+		svg.selectAll("textExp")
+			.data(data)
+			.enter()
+			.append("text")
+			.attr("font-family", "Calibri")
+			.attr("font-size", "20px")
+			.attr("x", 85)
+			.attr("y", function (d,i) {return y+25+i*40;})
+			.text( function (d) {return d.MERCHANTS});
+	
+		svg.append("line")
+			.attr("x1",220)
+			.attr("y1", y1)
+			.attr("x2",700)
+			.attr("y2", y1)
+			.attr("stroke","black")
+			.attr("stroke-width",1)
+
+		svg.append("line")
+			.attr("x1",220)
+			.attr("y1", y1-550)
+			.attr("x2",220)
+			.attr("y2", y1)
+			.attr("stroke","black")
+			.attr("stroke-width",1)
+
+		for(var i=1; i<=6; i=i+1)
+		{ 
+		svg.append("line")
+			.attr("x1",220+(i*73))
+			.attr("y1", y1-550)
+			.attr("x2",220+(i*73))
+			.attr("y2", y1)
+			.attr("stroke","black")
+			.attr("stroke-width",.15)
+			
+		svg.append("text")
+			.attr("font-family", "Calibri")
+			.attr("font-size", "15px")
+			.attr("x",207+(i*73))
+			.attr("y", y1+20)
+			.attr("fill", "black")
+			.text("$"+25*i);
+		}			
+		svg.append("line")
+			.attr("x1",220)
+			.attr("y1", y1)
+			.attr("x2",700)
+			.attr("y2", y1)
+			.attr("stroke","black")
+			.attr("stroke-width",1)
+			
+		var x2=1000;
+		var y2=400;
+		
+		svg.append("line")
+			.attr("x1", x2)
+			.attr("y1", y2+1)
+			.attr("x2", 1500)
+			.attr("y2", y2+1)
+			.attr("stroke","black")
+			.attr("stroke-width",1)	
+		
+		svg.append("line")
+			.attr("x1",x2)
+			.attr("y1", 100)
+			.attr("x2", x2)
+			.attr("y2", y2)
+			.attr("stroke","black")
+			.attr("stroke-width",1)
+
+		var data2 = [ {type:"SAVINGS",  atm : atm_s, billpay : billpay_s, check : check_s, credit : credit_s},
+					  {type:"CREDIT",   atm : atm_d, billpay : billpay_d, check : check_d, credit : credit_d},
+					  {type:"CHECKING", atm : atm_c, billpay : billpay_c, check : check_c, credit : credit_c} ];
+		var height_thickness = 0.5;
+		 
+		svg.selectAll("rect_savings_atm")
+			.data(data2)
+			.enter()
+			.append("rect")
+			.attr("width", 100)	
+			.attr("height", function (d) {return d.atm*height_thickness;})
+			.attr("x", function(d,i) {return x2 + 30 + (i*150);})
+			.attr("y", function(d) {return y2 - d.atm*height_thickness;})
+			.attr("fill","DarkTurquoise");
+
+		svg.selectAll("rect_savings_billpay")
+			.data(data2)
+			.enter()
+			.append("rect")
+			.attr("width", 100)	
+			.attr("height", function (d) {return d.billpay*height_thickness;})
+			.attr("x", function(d,i) {return x2 + 30 + (i*150);})
+			.attr("y", function(d) {return y2 - (d.billpay+d.atm)*height_thickness;})
+			.attr("fill","DodgerBlue");
+			
+		svg.selectAll("rect_savings_credit")
+			.data(data2)
+			.enter()
+			.append("rect")
+			.attr("width", 100)	
+			.attr("height", function (d) {return d.check*height_thickness;})
+			.attr("x", function(d,i) {return x2 + 30 + (i*150);})
+			.attr("y", function(d) {return y2 - (d.check+d.billpay+d.atm)*height_thickness;})
+			.attr("fill","DarkCyan");	
+
+		svg.selectAll("rect_savings_check")
+			.data(data2)
+			.enter()
+			.append("rect")
+			.attr("width", 100)
+			.attr("height", function (d) {return d.credit*height_thickness;})
+			.attr("x", function(d,i) {return x2 + 30 + (i*150);})
+			.attr("y", function(d) {return y2 - (d.credit+d.check+d.billpay+d.atm)*height_thickness;})
+			.attr("fill","Chartreuse");
+
+		svg.selectAll("textTypeExp")
+			.data(data2)
+			.enter()
+			.append("text")
+			.attr("x", function(d,i) {return x2 + 35 + (i*150);})
+			.attr("y", y2+30 )
+			.attr("font-family", "Calibri")
+			.attr("font-size", "20px")
+			.text(function (d) { return d.type});
+
+		for(var j=1; j<=5; j=j+1)
+		{
+		svg.append("line")
+			.attr("x1", x2)
+			.attr("y1", y2-(j*50.31))
+			.attr("x2", 1500)
+			.attr("y2", y2-(j*50.31))
+			.attr("stroke","black")
+			.attr("stroke-width",.15)
+			
+		svg.append("text")
+			.attr("font-family", "Calibri")
+			.attr("font-size", "15px")
+			.attr("x", x2-40)
+			.attr("y", y2+5-(j*50.31))
+			.attr("fill", "black")
+			.text("$"+100*j);
+		}
+
+		var atm_sum = atm_s + atm_d + atm_c;
+		var billpay_sum = billpay_s + billpay_d + billpay_c;
+		var check_sum = check_s + check_d + check_c;
+		var credit_sum = credit_s + credit_d + credit_c;
+		var sum = atm_sum + billpay_sum + check_sum + credit_sum;
+				
+		var group = svg.append("g")
+				.attr("transform","translate(100, 100)")
+				.attr("fill","DarkTurquoise");
+
+		var r = 130, x3 = 1100;
+
+		var p1 = atm_sum/sum * 6;
+		var arc = d3.svg.arc().innerRadius(r-80).outerRadius(r).startAngle(0).endAngle(p1);
+
+		group.append("path")
+		.attr('transform','translate('+ x3 +','+ 550 + ')')
+		.attr("d",arc);
+
+		var group = svg.append("g")
+				.attr("transform","translate(100, 100)")
+				.attr("fill","DarkCyan");
+
+		var p2 = (billpay_sum+atm_sum)/sum * 6;
+		var arc2 = d3.svg.arc().innerRadius(r-80).outerRadius(r).startAngle(p1).endAngle(p2);
+
+		group.append("path")
+		.attr('transform','translate('+ x3 +','+ 550 + ')')
+		.attr("d",arc2);
+
+		var group = svg.append("g")
+				.attr("transform","translate(100, 100)")
+				.attr("fill","DodgerBlue");
+
+		var p3 = (billpay_sum+atm_sum+check_sum)/sum * 6;
+		var arc3 = d3.svg.arc().innerRadius(r-80).outerRadius(r).startAngle(p2).endAngle(p3+.3);
+
+		group.append("path")
+		.attr('transform','translate('+ x3 +','+ 550 + ')')
+		.attr("d",arc3);
+
+		var group = svg.append("g")
+				.attr("transform","translate(100, 100)")
+				.attr("fill","Chartreuse");
+
+		var p4 = (billpay_sum+atm_sum+check_sum+credit_sum)/sum * 6;
+		var arc4 = d3.svg.arc().innerRadius(r-80).outerRadius(r).startAngle(p3+.3).endAngle(p4+.3);
+
+
+		group.append("path")
+		.attr('transform','translate('+ x3 +','+ 550 + ')')
+		.attr("d",arc4);
+
+				svg.append("text")
+					.attr("font-family", "Calibri")
+					.attr("font-size", "20px")
+					.attr("x", 1030)
+					.attr("y", 550)
+					.attr("fill", "black")
+					.text("CREDIT");
+					
+				svg.append("text")
+					.attr("font-family", "Calibri")
+					.attr("font-size", "20px")
+					.attr("fill", "black")
+					.attr("x", 1300)
+					.attr("y", 755)
+					.text("BILLPAY");
+
+				svg.append("text")
+					.attr("font-family", "Calibri")
+					.attr("font-size", "20px")
+					.attr("x", 1300)
+					.attr("y", 550)
+					.attr("fill", "black")
+					.text("ATM");
+
+				svg.append("text")
+					.attr("font-family", "Calibri")
+					.attr("font-size", "20px")
+					.attr("x", 1000)
+					.attr("y", 720)
+					.attr("fill", "black")
+					.text("CHECK");
+
+				svg.append("text")
+					.attr("font-family", "Calibri")
+					.attr("font-size", "20px")
+					.attr("x", 1125	)
+					.attr("y", 580)
+					.attr("fill", "black")
+					.text((credit_sum/sum*100).toFixed(1)+"%");
+					
+				svg.append("text")
+					.attr("font-family", "Calibri")
+					.attr("font-size", "20px")
+					.attr("fill", "black")
+					.attr("x", 1220)
+					.attr("y", 730)
+					.text((billpay_sum/sum*100).toFixed(1)+"%");
+
+				svg.append("text")
+					.attr("font-family", "Calibri")
+					.attr("font-size", "20px")
+					.attr("x", 1240)
+					.attr("y", 590)
+					.attr("fill", "black")
+					.text((atm_sum/sum*100).toFixed(1)+"%");
+
+				svg.append("text")
+					.attr("font-family", "Calibri")
+					.attr("font-size", "20px")
+					.attr("x", 1095)
+					.attr("y", 700)
+					.attr("fill", "black")
+					.text((check_sum/sum*100).toFixed(1)+"%");
+
+		var x4 = 815, y4 = 183;
+			
+		svg.append("rect")
+			 .attr("x",x4)
+			 .attr("y",y4)
+			 .attr("width", 20)
+			 .attr("height",20)
+			 .attr("fill","DarkTurquoise")
+
+		svg.append("text")
+			.attr("font-family", "Calibri")
+			.attr("font-size", "20px")
+			.attr("x", x4+30)
+			.attr("y", y4+17)
+			.attr("fill", "black")
+			.text("ATM");
+
+		svg.append("rect")
+			 .attr("x",x4)
+			 .attr("y",y4+30)
+			 .attr("width", 20)
+			 .attr("height",20)
+			 .attr("fill","DodgerBlue")
+
+			
+		svg.append("text")
+			.attr("font-family", "Calibri")
+			.attr("font-size", "20px")
+			.attr("x", x4+30)
+			.attr("y", y4+17+30)
+			.attr("fill", "black")
+			.text("BILLPAY");
+
+		svg.append("rect")
+			 .attr("x",x4)
+			 .attr("y",y4+60)
+			 .attr("width", 20)
+			 .attr("height",20)
+			 .attr("fill","Darkcyan")
+
+			
+		svg.append("text")
+			.attr("font-family", "Calibri")
+			.attr("font-size", "20px")
+			.attr("x", x4+30)
+			.attr("y", y4+17+60)
+			.attr("fill", "black")
+			.text("CHECK");
+
+		svg.append("rect")
+			 .attr("x",x4)
+			 .attr("y",y4+90)
+			 .attr("width", 20)
+			 .attr("height",20)
+			 .attr("fill","Chartreuse")
+
+		svg.append("text")
+			.attr("font-family", "Calibri")
+			.attr("font-size", "20px")
+			.attr("x", x4+30)
+			.attr("y", y4+17+90)
+			.attr("fill", "black")
+			.text("CREDIT");
+	
+		x4 = 230, y4 = 80;			
+		
+		svg.append("rect")
+			 .attr("x",x4)
+			 .attr("y",y4)
+			 .attr("width", 20)
+			 .attr("height",20)
+			 .attr("fill","DarkTurquoise")
+
+		svg.append("text")
+			.attr("font-family", "Calibri")
+			.attr("font-size", "20px")
+			.attr("x", x4+25)
+			.attr("y", y4+17)
+			.attr("fill", "black")
+			.text("SAVINGS");
+
+		svg.append("rect")
+			 .attr("x",x4+130)
+			 .attr("y",y4)
+			 .attr("width", 20)
+			 .attr("height",20)
+			 .attr("fill","DarkCyan")
+			
+		svg.append("text")
+			.attr("font-family", "Calibri")
+			.attr("font-size", "20px")
+			.attr("x", x4+25+130)
+			.attr("y", y4+17)
+			.attr("fill", "black")
+			.text("CREDIT");
+
+		svg.append("rect")
+			 .attr("x",x4+245)
+			 .attr("y",y4)
+			 .attr("width", 20)
+			 .attr("height",20)
+			 .attr("fill","DodgerBlue")
+
+		svg.append("text")
+			.attr("font-family", "Calibri")
+			.attr("font-size", "20px")
+			.attr("x", x4+25+245)
+			.attr("y", y4+17)
+			.attr("fill", "black")
+			.text("CHECKING");
+
+		svg.append("text")
+			.attr("font-family", "Calibri")
+			.attr("font-size", "35px")
+			.attr("x", 320)
+			.attr("y", 50)
+			.attr("fill", "black")
+			.text("MERCHANTS");
+
+		svg.append("text")
+			.attr("font-family", "Calibri")
+			.attr("font-size", "35px")
+			.attr("x", 1100)
+			.attr("y", 90)
+			.attr("fill", "black")
+			.text("PAYMENT METHOD");
+
+		svg.append("text")
+			.attr("font-family", "Calibri")
+			.attr("font-size", "35px")
+			.attr("x", 1085)
+			.attr("y", 500)
+			.attr("fill", "black")
+			.text("PAYMENT SPLIT");
+
+		svg.append("text")
+			.attr("font-family", "Calibri")
+			.attr("font-size", "30px")
+			.attr("x", 100)
+			.attr("y", 800)
+			.attr("fill", "DarkRed	")
+			.text("OBSERVATIONS FROM THE VISUALIZATION:");
+
+		svg.append("text")
+			.attr("font-family", "Calibri")
+			.attr("font-size", "30px")
+			.attr("x", 100)
+			.attr("y", 850)
+			.attr("fill", "Red")
+			.text("Lots of money spend in Entertainment, Clothing and Automobile since these are not priority.");
+			
+		svg.append("text")
+			.attr("font-family", "Calibri")
+			.attr("font-size", "30px")
+			.attr("x", 100)
+			.attr("y", 900)
+			.attr("fill", "Red")
+			.text("Need to reduce the withdrawal from ATMs and keep a track on Credit Card spendings.");
+
+			})
+
+	// End Script
+	</script>
+</body>
